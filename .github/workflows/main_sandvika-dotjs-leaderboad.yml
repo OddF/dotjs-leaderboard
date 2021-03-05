@@ -1,0 +1,35 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - sandvika-dotjs-leaderboad
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@master
+
+    - uses: azure/docker-login@v1
+      with:
+        login-server: https://oddfcontainers1.azurecr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername_615d43e8c0c44f3fbae5b3374cb912bb }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_58c710939a684b6c9445d53c774a3ef3 }}
+
+    - run: |
+        docker build . -t oddfcontainers1.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_615d43e8c0c44f3fbae5b3374cb912bb }}/dotjs-leaderboard:${{ github.sha }}
+        docker push oddfcontainers1.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_615d43e8c0c44f3fbae5b3374cb912bb }}/dotjs-leaderboard:${{ github.sha }}
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'sandvika-dotjs-leaderboad'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_7c7ef0bc0d8a4ab88eaf8fe9a7d4a929 }}
+        images: 'oddfcontainers1.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_615d43e8c0c44f3fbae5b3374cb912bb }}/dotjs-leaderboard:${{ github.sha }}'
