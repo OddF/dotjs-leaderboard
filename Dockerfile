@@ -21,5 +21,4 @@ COPY --from=builder /app/package.json ./
 ENV PORT 3000
 EXPOSE 3000
 
-#RUN npx blitz prisma migrate dev --preview-feature
-CMD npx blitz start --production
+CMD npx blitz prisma migrate dev --preview-feature && npx blitz start --production
