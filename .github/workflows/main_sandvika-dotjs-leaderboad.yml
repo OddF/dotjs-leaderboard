@@ -22,9 +22,15 @@ jobs:
         username: ${{ secrets.AzureAppService_ContainerUsername_b1d2adb7dce94a6987833e36728a1341 }}
         password: ${{ secrets.AzureAppService_ContainerPassword_02db88751a994082a1336bfeab96cec4 }}
 
-    - run: |
+    - name: Build and push image
+      run: |
         docker build . -t oddfcontainers1.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_b1d2adb7dce94a6987833e36728a1341 }}/oddfcontainers1/dotjs-leaderboard:${{ github.sha }}
         docker push oddfcontainers1.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_b1d2adb7dce94a6987833e36728a1341 }}/oddfcontainers1/dotjs-leaderboard:${{ github.sha }}
+
+    - name: Run migration against database
+      run: |
+        docker build -t builder --target builder .
+        docker run -e DATABASE_URL='${{ secrets.DATABASE_URL }}' --entrypoint 'bash' builder -c 'npx blitz prisma migrate dev --preview-feature'
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
