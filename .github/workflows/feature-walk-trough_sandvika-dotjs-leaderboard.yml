@@ -26,6 +26,11 @@ jobs:
         docker build . -t ofcontainers.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_766c96ada8c64e8ebb9aaae2d55d3fce }}/workshop/dotjs-leaderboard:${{ github.sha }}
         docker push ofcontainers.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_766c96ada8c64e8ebb9aaae2d55d3fce }}/workshop/dotjs-leaderboard:${{ github.sha }}
 
+    - name: migrate database
+      run: |
+        docker build -t builderimage --target builder .
+        docker run -e DATABASE_URL='${{ secrets.DATABASE_URL }}' --entrypoint 'bash' builderimage -c 'npx blitz prisma migrate deploy --preview-feature'
+
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
