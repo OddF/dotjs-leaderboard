@@ -18,14 +18,14 @@ jobs:
 
     - uses: azure/docker-login@v1
       with:
-        login-server: https://oddfcontainers1.azurecr.io/
-        username: ${{ secrets.AzureAppService_ContainerUsername_b1d2adb7dce94a6987833e36728a1341 }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_02db88751a994082a1336bfeab96cec4 }}
+        login-server: https://ofcontainers.azurecr.io/
+        username: ${{ secrets.AZURE_CONTAINER_USERNAME }}
+        password: ${{ secrets.AZURE_CONTAINER_PASSWORD }}
 
     - name: Build and push image
       run: |
-        docker build . -t oddfcontainers1.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_b1d2adb7dce94a6987833e36728a1341 }}/oddfcontainers1/dotjs-leaderboard:${{ github.sha }}
-        docker push oddfcontainers1.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_b1d2adb7dce94a6987833e36728a1341 }}/oddfcontainers1/dotjs-leaderboard:${{ github.sha }}
+        docker build . -t ofcontainers.azurecr.io/${{ secrets.AZURE_CONTAINER_USERNAME }}/dotjs-leaderboard:${{ github.sha }}
+        docker push ofcontainers.azurecr.io/${{ secrets.AZURE_CONTAINER_USERNAME }}/dotjs-leaderboard:${{ github.sha }}
 
     - name: Run migration against database
       run: |
@@ -37,5 +37,5 @@ jobs:
       with:
         app-name: 'sandvika-dotjs-leaderboad'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_114d0388197c4523a066a9c537282f52 }}
-        images: 'oddfcontainers1.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_b1d2adb7dce94a6987833e36728a1341 }}/oddfcontainers1/dotjs-leaderboard:${{ github.sha }}'
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_87CD90CBC0AD4DC5B188F70AF43B3EE2 }}
+        images: 'ofcontainers.azurecr.io/${{ secrets.AZURE_CONTAINER_USERNAME }}/dotjs-leaderboard:${{ github.sha }}'
